@@ -11,7 +11,7 @@ using namespace std;
 using namespace mssm;
 
 void welcomePage (Graphics& g){
-    Sound music("/Users/bbao2019/Desktop/Pong.wav");
+
 
     while (g.draw()) {
         g.clear();
@@ -20,7 +20,28 @@ void welcomePage (Graphics& g){
         for (const Event& e : g.events()){
             switch (e.evtType){
             case EvtType:: MousePress:
-                g.play(music);
+                return;
+            case EvtType::KeyPress:
+                return;
+            default:
+                break;
+            }
+        }
+
+    }
+     Sound music("/Users/bbao2019/Desktop/Pong.wav");
+}
+
+void endGame (Graphics& g, int score){
+
+    while (g.draw()) {
+        g.clear();
+
+        g.text({100,300}, 20, "You Lost...");
+        g.text({100,250},20, "Score: " + to_string(score));
+        for (const Event& e : g.events()){
+            switch (e.evtType){
+            case EvtType:: MousePress:
                 break;
             case EvtType::KeyPress:
                 return;
@@ -35,71 +56,97 @@ void welcomePage (Graphics& g){
 void graphicsMain(Graphics& g)
 {
     welcomePage(g);
-    Sound music(".wav");
+    Sound music("/Users/bbao2019/Desktop/Pong.wav");
 
+    Color color = {255,255,255};
+    int ballSize = 20;
+    int paddleWidth = 60;
+    int lives = 3;
+    int score = 0;
 
-   int ballSize = 20;
-   int screenHeight = 600;
-   int screenWidth = 600;
-   int paddleHeight = 15;
-   int paddleWidth = 60;
+    Vec2d ballPosition{78,132};
+    Vec2d ballVelocity{6.9,9.3};
+    double originalSpeed = ballVelocity.magnitude();
+    Vec2d paddlePlacement{4,0};
+    int paddleSpeed = 15;
 
-   Vec2d ballPosition{78,132};
-   Vec2d ballVelocity{6.9,9.3};
-   Vec2d paddlePlacement{4,0};
-   Vec2d moveleft {-6,0};
-   Vec2d moveright {6,0};
 
     while (g.draw()) {
-           g.clear();
+        g.clear();
 
-           g.rect(paddlePlacement, 60, 15, BLUE, WHITE);
-            if (g.isKeyPressed(Key::Left)) {
-               paddlePlacement = paddlePlacement + moveleft;
-           }
+        g.text({g.width()/2 +50, g.height()-25},20, "Speed Multiplier: " + to_string(ballVelocity.magnitude()/originalSpeed), color);
+        g.text({g.width()/2 -250, g.height()-25},20, "Score: " + to_string(score), color);
+        g.text({g.width()/2-50, g.height()-25},20, "Lives: " + to_string(lives), color);
 
-            if (g.isKeyPressed(Key::Right)) {
-                paddlePlacement = paddlePlacement + moveright;
+        g.rect(paddlePlacement, 60, 15, color, color);
+        if (g.isKeyPressed(Key::Left) && paddlePlacement.x > 0) {
+            paddlePlacement.x -= paddleSpeed;
+        }
+
+        if (g.isKeyPressed(Key::Right) && paddlePlacement.x < g.width()-paddleWidth) {
+            paddlePlacement.x += paddleSpeed;
+        }
+
+        if(ballPosition.y <= 15 + ballSize && ballPosition.x > paddlePlacement.x && ballPosition.x < (paddlePlacement.x + paddleWidth)){
+            ballVelocity.y = -ballVelocity.y;
+            ballPosition.y = 26;
+            score ++;
+            ballVelocity = ballVelocity * 1.025;
+            g.play(music);
+            color.r -= 10;
+            color.g -= 20;
+            color.b -= 30;
+        }
+
+        g.ellipseC(ballPosition, ballSize, ballSize, color, color);
+        ballPosition = ballPosition + ballVelocity;
+        //cout << ballPosition.x << ballPosition.y << endl;
+        if(ballPosition.y >= g.height()-ballSize){
+            ballVelocity.y = -ballVelocity.y;
+        }
+        if(ballPosition.x >= g.height()-ballSize || ballPosition.x <= ballSize){
+            ballVelocity.x= -ballVelocity.x;
+        }
+        if (ballPosition.y <= 0){ //THIS IS WHERE DYING HAPPENS
+            ballPosition = {g.width()/2, g.height()/2};
+            ballVelocity = {6.9,9.3};
+            if (lives == 1){
+                lives = 3;
+                color = {255,255,255};
+                int oldscore = score;
+                score = 0;
+                endGame(g,oldscore);
+            }
+            else {
+                lives = lives - 1;
             }
 
-            if(ballPosition.y <= 15 + ballSize && ballPosition.x > paddlePlacement.x && ballPosition.x < (paddlePlacement.x + paddleWidth)){
-             ballVelocity.y = -ballVelocity.y;
-             ballPosition.y = 26;
-       }
 
-           g.ellipseC(ballPosition, ballSize, ballSize, BLUE, YELLOW);
-           ballPosition = ballPosition + ballVelocity;
-//cout << ballPosition.x << ballPosition.y << endl;
-           if(ballPosition.y >= screenHeight-ballSize){
-               ballVelocity.y = -ballVelocity.y;
-           }
-           if(ballPosition.x >= screenHeight-ballSize || ballPosition.x <= ballSize){
-               ballVelocity.x= -ballVelocity.x;
-           }
+        }
 
-           for (const Event& e : g.events())
-           {
-               switch (e.evtType)
-               {
-               case EvtType::MousePress:
+        for (const Event& e : g.events())
+        {
+            switch (e.evtType)
+            {
+            case EvtType::MousePress:
 
-                   break;
-               case EvtType::MouseRelease:
-                   break;
-               case EvtType::MouseWheel:
-                   break;
-               case EvtType::MouseMove:
-                   break;
-               case EvtType::KeyPress:
-                   break;
-               case EvtType::KeyRelease:
-                   break;
-               default:
-                   break;
-               }
-           }
-       }
-   }
+                break;
+            case EvtType::MouseRelease:
+                break;
+            case EvtType::MouseWheel:
+                break;
+            case EvtType::MouseMove:
+                break;
+            case EvtType::KeyPress:
+                break;
+            case EvtType::KeyRelease:
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
 
 //bool verticalCollision (int screenHeight, int ballPosition, int ballHeight){
 //   return ballPosition
