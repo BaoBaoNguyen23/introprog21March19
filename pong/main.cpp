@@ -37,7 +37,7 @@ void endGame (Graphics& g, int score){
     while (g.draw()) {
         g.clear();
 
-        g.text({100,300}, 20, "You Lost...");
+        g.text({100,300}, 20, "You Lost... (press any key to continue)");
         g.text({100,250},20, "Score: " + to_string(score));
         for (const Event& e : g.events()){
             switch (e.evtType){
@@ -76,7 +76,7 @@ void graphicsMain(Graphics& g)
 
         g.text({g.width()/2 +50, g.height()-25},20, "Speed Multiplier: " + to_string(ballVelocity.magnitude()/originalSpeed), color);
         g.text({g.width()/2 -250, g.height()-25},20, "Score: " + to_string(score), color);
-        g.text({g.width()/2-50, g.height()-25},20, "Lives: " + to_string(lives), color);
+        g.text({g.width()/2-80, g.height()-25},20, "Lives: " + to_string(lives), color);
 
         g.rect(paddlePlacement, 60, 15, color, color);
         if (g.isKeyPressed(Key::Left) && paddlePlacement.x > 0) {
