@@ -37,7 +37,38 @@ Vec2d xyToRowCol(Graphics& g, int boxWidth, Vec2d pos, int boxHeight){
     return {col, row};
 }
 
+int numNeighbors(vector<vector<bool>> grid, int row, int column, int numRows, int numColumns){
+//    grid[row][column]
+//    grid [row][column+1]
 
+      int nn = 0;
+
+      if (grid[row][column+1] == true){
+        nn++;
+    }
+      if (grid[row][column-1] == true){
+        nn++;
+    }
+      if (grid[row+1][column+1] == true){
+        nn++;
+    }
+      if (grid[row-1][column+1] == true){
+        nn++;
+    }
+      if (grid[row+1][column-1] == true){
+        nn++;
+    }
+      if (grid[row][column+1] == true){
+        nn++;
+    }
+      if (grid[row-1][column] == true){
+        nn++;
+    }
+      if (grid[row+1][column] == true){
+        nn++;
+    }
+      return nn;
+}
 
 void graphicsMain(Graphics& g)
 {
@@ -46,8 +77,15 @@ void graphicsMain(Graphics& g)
     int numRows = 10;
     int boxWidth = 30;
     int boxHeight = 30;
+//    int column = 10;
 
-    vector<vector<bool>> grid(numRows, vector<bool>(numColumns, false));
+
+    for (int row = 0; row< numRows; row++){
+        for (int column = 0; column < numColumns; column++){
+            grid[row][column] = rand()%2;
+        }
+    }
+
 
     while (g.draw()) {
         g.clear();
