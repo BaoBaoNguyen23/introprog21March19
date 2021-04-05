@@ -10,23 +10,35 @@
 
 using namespace std;
 using namespace mssm;
+
+bool isFull (vector<vector<int>> grid){
+    for (vector<int> column:grid){
+        for(int box : column){
+            if (box == 0){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 int diagonalRight(vector<vector<int>>grid){
-    for (int x =0; x<4; x++){
-        for(int y=6; y >3; y--){
-           int p1 = 0;
-           int p2 = 0;
+    for (int x =5; x>=3; x--){
+        for(int y=0; y <=3; y++){
+            int p1 = 0;
+            int p2 = 0;
 
             for(int i=0; i<4; i++){
-               if(grid[x+i][y-i]==1)
-               {
-                   p1++;
-               }
-               else if(grid[x+i][y-i]==2){
-                   p2++;
-               }
-               else{
-                   break;
-               }
+                if(grid[x-i][y+i]==1)
+                {
+                    p1++;
+                }
+                else if(grid[x-i][y+i]==2){
+                    p2++;
+                }
+                else{
+                    break;
+                }
             }
             if (p1 ==4){
                 return 1;
@@ -41,22 +53,22 @@ int diagonalRight(vector<vector<int>>grid){
 }
 
 int diagonalLeft(vector<vector<int>>grid){
-    for (int x =5; x>4; x--){
-        for(int y=6; y >3; y--){
-           int p1 = 0;
-           int p2 = 0;
+    for (int x =5; x>=3; x--){
+        for(int y=6; y >=3; y--){
+            int p1 = 0;
+            int p2 = 0;
 
             for(int i=0; i<4; i++){
-               if(grid[x-i][y+i]==1)
-               {
-                   p1++;
-               }
-               else if(grid[x-i][y+i]==2){
-                   p2++;
-               }
-               else{
-                   break;
-               }
+                if(grid[x-i][y-i]==1)
+                {
+                    p1++;
+                }
+                else if(grid[x-i][y-i]==2){
+                    p2++;
+                }
+                else{
+                    break;
+                }
             }
             if (p1 ==4){
                 return 1;
@@ -123,11 +135,19 @@ int whoWon(vector<vector<int>> grid){
         p1 =0;
         p2 =0;
     }
+
     if(diagonalLeft(grid))
     {
         return diagonalLeft(grid);
     }
-    return diagonalRight(grid);
+    if(diagonalRight(grid))
+    {
+        return diagonalRight(grid);
+    }
+    if (isFull(grid)){
+        return 3;
+    }
+    return 0;
 }
 
 
@@ -180,27 +200,6 @@ void dropToken(Graphics& g, vector<vector<int>>& grid, int col, bool& playerOneT
     }
 }
 
-void endGame (Graphics& g){
-
-    while (g.draw()) {
-        g.clear();
-
-        //        TextMetrics textMetrics; only to center
-
-        g.text({100,300}, 20, "You Lost... (press any key to continue)");
-        for (const Event& e : g.events()){
-            switch (e.evtType){
-            case EvtType:: MousePress:
-                break;
-            case EvtType::KeyPress:
-                return;
-            default:
-                break;
-            }
-        }
-
-    }
-}
 
 
 void graphicsMain(Graphics& g)
@@ -223,7 +222,7 @@ void graphicsMain(Graphics& g)
     //    int column = 10;
 
 
-
+    bool isGameOver = false;
 
     bool playerOneTurn = true; // when this is true, it is player 1's turn. when false it player 2 turn!!
 
@@ -234,7 +233,14 @@ void graphicsMain(Graphics& g)
 
         //        (g.width()-2*leftMargin)/columnWidth;
 
-
+        if(playerOneTurn)
+        {
+            g.text(g.width()/2-75,g.height()-g.height()/8,20,"Player One's Turn",RED);
+        }
+        else
+        {
+            g.text(g.width()/2-75,g.height()-g.height()/8,20,"Player Two's Turn",YELLOW);
+        }
         for (int column = 0; column < numColumns; column++){
             for (int row = 0; row <numRows; row++){
                 Color fillColor = BLACK;
@@ -248,7 +254,7 @@ void graphicsMain(Graphics& g)
                     fillColor = BLACK;
                 }
 
-                g.ellipse (rowColtoXY(g, boxWidth, boxHeight, row, column), boxWidth, boxHeight, GREEN, fillColor);
+                g.ellipse (rowColtoXY(g, boxWidth, boxHeight, row, column), boxWidth, boxHeight, WHITE, fillColor);
             }
         }
         Vec2d rc = xyToRowCol(g, boxWidth, g.mousePos(), boxHeight);
@@ -258,32 +264,54 @@ void graphicsMain(Graphics& g)
 
         g.text({10,10}, 20, to_string(currentRow) + " " + to_string(currentCol));
         if (winner){
-            g.text (g.width()/2-50, g.height()/1,25,{"Player "+to_string(winner)+" wins!"});
-            return;
+            isGameOver = true;
+            if (winner==3){
+                g.text (g.width()/2-160, g.height()/20,25,{"Draw! Press any key to reset"});
+            }
+            else if(winner==1){
+                g.text (g.width()/2-160, g.height()/20,20,{"Player "+to_string(winner)+" wins! Press any key to reset"},RED);
+            }
+            else{
+                g.text (g.width()/2-160, g.height()/20,20,{"Player "+to_string(winner)+" wins! Press any key to reset"},YELLOW);
+            }
+
         }
         for (const Event& e : g.events())
         {
             switch (e.evtType)
             {
             case EvtType::MousePress:{
-
-                Vec2d rc = xyToRowCol(g, boxWidth, g.mousePos(), boxHeight);
-                int col = rc.x;
-                dropToken(g,grid,col,playerOneTurn);
-                winner = whoWon(grid);
-
+                if(!isGameOver){
+                    Vec2d rc = xyToRowCol(g, boxWidth, g.mousePos(), boxHeight);
+                    int col = rc.x;
+                    dropToken(g,grid,col,playerOneTurn);
+                    winner = whoWon(grid);
+                }
+                break;
             }
+            case EvtType::MouseRelease:{
                 break;
-            case EvtType::MouseRelease:
+            }
+            case EvtType::MouseWheel:{
                 break;
-            case EvtType::MouseWheel:
+            }
+            case EvtType::MouseMove:{
                 break;
-            case EvtType::MouseMove:
+            }
+            case EvtType::KeyPress:{
+                for (int i=0; i<grid.size(); i++){
+                    for (int j=0; j<grid[i].size(); j++){
+                        grid [i][j] = 0;
+                    }
+                }
+                playerOneTurn = true;
+                isGameOver = false;
+                winner = 0;
                 break;
-            case EvtType::KeyPress:
+            }
+            case EvtType::KeyRelease:{
                 break;
-            case EvtType::KeyRelease:
-                break;
+            }
             default:
                 break;
             }
@@ -291,9 +319,32 @@ void graphicsMain(Graphics& g)
     }
 }
 
+//void endGame (Graphics& g, vector<vector<int>>& grid){
+
+//    while (g.draw()) {
+//        g.clear();
+
+//        //        TextMetrics textMetrics; only to center
+
+//        g.text({100,300}, 20, "You Lost... (press any key to continue)");
+//        for (const Event& e : g.events()){
+//            switch (e.evtType){
+//            case EvtType:: MousePress:
+//                break;
+//            case EvtType::KeyPress:
+
+//                break;
+//            default:
+//                break;
+//            }
+//        }
+//    }
+//}
+
 int main(int /*argc*/, char** /*argv*/)
 {
     // main should be empty except for the following line:
     Graphics g("Graphics", 500, 500, graphicsMain);
     return 0;
 }
+
