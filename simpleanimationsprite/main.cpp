@@ -26,7 +26,7 @@ void graphicsMain(Graphics& g)
     while (g.draw()) {
         //        double aspectRatio = 1.0*sprites.width()/sprites.height();
         //        g.image({100,100},  g.width()*aspectRatio, g.height(), sprites);
-        if(g.isKeyPressed(Key::Left) && spritePosX > 0) {
+        if(g.isKeyPressed(Key::Left) && spritePosX >= 0) {
             goingRight = false;
 
             cout<<"LEFT "<<spritePosX<<" frame: "<<frameNum<<endl;
