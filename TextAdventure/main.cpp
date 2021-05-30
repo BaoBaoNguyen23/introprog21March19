@@ -18,10 +18,10 @@ int main() // North, East, South, West
             {"Bedroom", "You are in the Bedroom. There is nobody here and the windows are barred. In the corner, there's a little safe. It's locked. The bedsheets are made out of cotton. ",{"Kitchen", "Bathroom","",""}, {"Bed", "Safe", "BloodyCarpet", "Closet", "BasketballHoop"}},
             {"Bathroom", "You are in the Bathroom. It is a contemporary style bathroom with polished hardwood. There are granite countertops and a running sink. ", {"", "", "", "Bedroom", ""}, {"Sink", "Tub with body", "Toothbrush"}},
             {"Kitchen", "You are in the Kitchen. It is a modern styled bathroom with deluxe appliances, large working islands, and food prep zones.", {"Garden", "Pantry", "Bedroom", ""}, {"BloodyKnife", "FruitBowl", "Keurig", "SkilletWithEggs"}},
-            {"Pantry", "You are in the Pantry. ", {"Garden", "","", "Kitchen"}, {"Cereal", "BrokenClock", "Broom"}},
-            {"Garden","Description", {"PoolHouse", "Pool", "Pantry", "Kitchen"}, {"Flower", "Hose", "Glove", "Chair"}},
-            {"PoolHouse", "Description", {"", "Pool", "Garden"}, {"Key", "Drugs", "Sofa", "CoffeeTable"}},
-            {"Pool", "Description", {"PoolHouse", "", "Garden"}, {"DivingBoard", "BeachBall", "PoolFloaties"}}
+            {"Pantry", "You are in the Pantry. It is a walk-in style pantry with lots of appliances. There is a garden gnome!! ", {"Garden", "","", "Kitchen"}, {"Cereal", "BrokenClock", "Broom"}},
+            {"Garden","You are in the Garden. It is almost like a green house. There are plants hanging from the ceiling, on shelves, and on the floor. The flooring is tiled. ", {"PoolHouse", "Pool", "Pantry", "Kitchen"}, {"Flower", "Hose", "Glove", "Chair"}},
+            {"PoolHouse", "You are in the Pool House. It is a modern Pool House with cocaine lines and clothes everywhere. The countertops are marble and there is alcohol everywhere. There is something important beneath everything. ", {"", "Pool", "Garden"}, {"Key", "Drugs", "Sofa", "CoffeeTable"}},
+            {"Pool", "You are in the Pool. It is an olympic sized pool with lanelines and limestone flooring. The Pool is 16ft deep. ", {"PoolHouse", "", "Garden"}, {"DivingBoard", "BeachBall", "PoolFloaties"}}
                 }
                 ,{},0
                };
